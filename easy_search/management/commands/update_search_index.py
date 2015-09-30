@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from simplesearch import SimpleSiteSearcher
+from easy_search.simple_site_searcher import SimpleSiteSearcher
 
 class Command(BaseCommand):
     args = '<url_to_sitemap, url_to_sitemap, ... >'
