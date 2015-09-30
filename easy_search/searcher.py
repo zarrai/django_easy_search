@@ -9,7 +9,7 @@ from lxml import etree
 from StringIO import StringIO
 from django.conf import settings
 
-class SimpleSiteSearcher:
+class Searcher:
 
     def __init__(self):
         self.schema = Schema(url=ID(stored=True), text=TEXT(stored=True,spelling=True), title=TEXT(stored=True))
