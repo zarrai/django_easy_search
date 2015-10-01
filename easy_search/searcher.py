@@ -44,6 +44,12 @@ class Searcher:
         # kill all script and style elements
         for script in soup(["script", "style"]):
             script.extract()    # rip it out
+        
+        # simple possibility to exclude parts of the html
+        for element in soup(['nav']):
+            element.extract()
+        for element in soup.findAll('div', {'class': 'no-search'}):
+            element.extract()
 
         # get text
         text = soup.get_text()
