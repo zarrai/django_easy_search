@@ -9,7 +9,7 @@ from lxml import etree
 from StringIO import StringIO
 from django.conf import settings
 
-class SimpleSiteSearcher:
+class Searcher:
 
     def __init__(self):
         self.schema = Schema(url=ID(stored=True), text=TEXT(stored=True,spelling=True), title=TEXT(stored=True))
@@ -17,10 +17,10 @@ class SimpleSiteSearcher:
             os.mkdir(settings.INDEX_DIR)
             self.index = create_in(settings.INDEX_DIR,self.schema)
         self.index = open_dir(settings.INDEX_DIR)
-
-
+    
+    
     def reset_index(self):
-        self.index = create_in("index",self.schema)
+        self.index = create_in(settings.INDEX_DIR,self.schema)
 
     #scan a site based on a sitemap url
     def scan_site(self,sitemap_url):
@@ -35,7 +35,7 @@ class SimpleSiteSearcher:
             search_url = url.xpath('.//x:loc/text()', namespaces=NS)[0]
             self._parse_url(unicode(search_url))
 
-
+            
     def _parse_url(self,url):
         print "scanning url: %s" % url
         html = urllib.urlopen(url).read()
@@ -44,6 +44,12 @@ class SimpleSiteSearcher:
         # kill all script and style elements
         for script in soup(["script", "style"]):
             script.extract()    # rip it out
+        
+        # simple possibility to exclude parts of the html
+        for element in soup(['nav']):
+            element.extract()
+        for element in soup.findAll('div', {'class': 'no-search'}):
+            element.extract()
 
         # get text
         text = soup.get_text()
