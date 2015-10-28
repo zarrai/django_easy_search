@@ -28,3 +28,10 @@
   `easy_search/results.html`
   and
   `easy_search/_results.html`
+
+
+## Changing the view
+
+If you would like to e.g. add additional template variables or change
+the template file, you can override the view.
+Do this by inheriting from `easy_search.views.EasySearchResultsMixin`.

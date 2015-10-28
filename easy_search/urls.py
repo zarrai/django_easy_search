@@ -1,5 +1,8 @@
 from django.conf.urls import *  # NOQA
 
+from .views import EasySearchResultsView
+
+
 urlpatterns = patterns('',
-    url(r'^$', 'easy_search.views.results')
+    url(r'^$', EasySearchResultsView.as_view())
 )
