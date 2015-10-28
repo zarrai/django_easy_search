@@ -68,6 +68,8 @@ class Searcher:
 
     #do the search on the generated index.
     def search(self,query):
+        if not query:
+            return []
         search_result = []
         with self.index.searcher() as searcher:
             qp = QueryParser("text", schema=self.index.schema)

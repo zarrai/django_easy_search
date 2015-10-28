@@ -15,7 +15,7 @@ class EasySearchResultsMixin(object):
         return results
     
     def get_query(self):
-        return self.request.GET.get('q', None)
+        return self.request.GET.get('q', '')
     
     def get_context_data(self, **kwargs):
         context = super(EasySearchResultsMixin, self).get_context_data(**kwargs)
