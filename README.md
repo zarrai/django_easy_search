@@ -15,7 +15,7 @@
 - Include the necessary urls:  
   `url(r'^search/', include('easy_search.urls'))`
 - Define an `EASY_SEARCH_INDEX_DIR` in your settings file where to put the search index files.
-- Make sure the SITES module is enabled and the the default domain name is correct.
+- Make sure the SITES module is enabled and the default domain name is correct.
 - Make sure you have a sitemap
 - Create the search index  
   `python manage.py update_search_index <sitemap-url>`
