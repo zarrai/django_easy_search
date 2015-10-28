@@ -5,6 +5,8 @@ from whoosh.fields import Schema, TEXT, ID
 from whoosh.index import create_in, open_dir
 from whoosh.query import *
 from whoosh.qparser import QueryParser
+from whoosh.qparser import MultifieldParser
+
 from lxml import etree
 from StringIO import StringIO
 from django.conf import settings
@@ -14,6 +16,10 @@ class EasySearchField(object):
     
     def __init__(self, soup, url):
         self.content = unicode(self.parse_soup(soup, url))
+    
+    @classmethod
+    def get_display(cls, result):
+        return result.get(cls.name, '')
 
 
 class TextField(EasySearchField):
@@ -26,6 +32,10 @@ class TextField(EasySearchField):
         chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
         text = '\n'.join(chunk for chunk in chunks if chunk)
         return text
+    
+    @classmethod
+    def get_display(cls, result):
+        return result.highlights("text")
 
 
 class TitleField(EasySearchField):
@@ -42,7 +52,14 @@ class URLField(EasySearchField):
     
     def parse_soup(self, soup, url):
         return url
-        
+
+
+class LanguageField(EasySearchField):
+    name = 'language'
+    whoosh_field = TEXT(stored=True)
+    
+    def parse_soup(self, soup, url):
+        return soup.html.attrs.get('lang', '')
 
 
 DEFAULT_EASY_SEARCH_FIELDS = (
@@ -101,7 +118,6 @@ class Searcher:
         html = urllib.urlopen(url).read()
         soup = BeautifulSoup(html)
         soup = self.clean_soup(soup)
-        
         document_kwargs = self.get_document_kwargs(soup, url)
         writer = self.index.writer()
         writer.add_document(**document_kwargs)
@@ -129,13 +145,24 @@ class Searcher:
         if not query:
             return []
         search_result = []
+        query = '*%s*' % query
         with self.index.searcher() as searcher:
-            qp = QueryParser("text", schema=self.index.schema)
-            q = qp.parse('*' + query + '*')
+            #q = Term('text', query)# | Term('title', query)
+            field_names = self.get_field_names()
+            qp = MultifieldParser(field_names, schema=self.index.schema)
+            q = qp.parse(query)
             results = searcher.search(q)
             results.fragmenter.surround = 20
             for r in results:
-                res_obj = {'text': r.highlights("text"), 'url': r['url'], 'title': r['title'] }
+                res_obj = self.get_result_dict(r)
                 search_result.append(res_obj)
             return search_result
-
+    
+    def get_field_names(self):
+        return [f.name for f in self.search_fields]
+    
+    def get_result_dict(self, result):
+        return dict([
+            (f.name, f.get_display(result))
+            for f in self.search_fields
+        ])
