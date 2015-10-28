@@ -21,8 +21,8 @@ class EasySearchResultsMixin(object):
         context = super(EasySearchResultsMixin, self).get_context_data(**kwargs)
         query = self.get_query()
         object_list = self.get_search_results(query)
-        context['query'] = query
-        context['list'] = object_list
+        context['easy_search_string'] = query
+        context['easy_search_results'] = object_list
         return context
 
 

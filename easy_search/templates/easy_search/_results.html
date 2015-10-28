@@ -1,6 +1,6 @@
 {% load i18n %}
 <ul>
-	{% for result in list %}
+	{% for result in easy_search_results %}
 		<li>
 			<h4><a href="{{result.url}}">{{result.title}}</a></h4>
 			<p>{{result.text | safe}}</p>
