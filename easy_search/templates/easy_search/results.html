@@ -5,16 +5,6 @@
 
 <h3>{% trans 'Results for' %} "{{ query }}"</h3>
 
-<ul>
-	{% for result in list %}
-		<li>
-			<h4><a href="{{result.url}}">{{result.title}}</a></h4>
-			<p>{{result.text | safe}}</p>
-			<small><a href="{{result.url}}">{{result.url}}</a></small>
-		</li>
-	{% empty %}
-		<p>{% trans 'Pitty. Nothing found.' %}</p>
-	{% endfor %}
-</ul>
+{% include 'easy_search/_results.html' %}
 {% endblock content %}
 

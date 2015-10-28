@@ -13,14 +13,14 @@ class Searcher:
 
     def __init__(self):
         self.schema = Schema(url=ID(stored=True), text=TEXT(stored=True,spelling=True), title=TEXT(stored=True))
-        if not os.path.exists(settings.INDEX_DIR):
-            os.mkdir(settings.INDEX_DIR)
-            self.index = create_in(settings.INDEX_DIR,self.schema)
-        self.index = open_dir(settings.INDEX_DIR)
+        if not os.path.exists(settings.EASY_SEARCH_INDEX_DIR):
+            os.mkdir(settings.EASY_SEARCH_INDEX_DIR)
+            self.index = create_in(settings.EASY_SEARCH_INDEX_DIR,self.schema)
+        self.index = open_dir(settings.EASY_SEARCH_INDEX_DIR)
     
     
     def reset_index(self):
-        self.index = create_in(settings.INDEX_DIR,self.schema)
+        self.index = create_in(settings.EASY_SEARCH_INDEX_DIR,self.schema)
 
     #scan a site based on a sitemap url
     def scan_site(self,sitemap_url):
@@ -77,6 +77,5 @@ class Searcher:
             for r in results:
                 res_obj = {'text': r.highlights("text"), 'url': r['url'], 'title': r['title'] }
                 search_result.append(res_obj)
-            print search_result
             return search_result
 
