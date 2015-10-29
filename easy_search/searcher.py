@@ -62,11 +62,24 @@ class LanguageField(EasySearchField):
         return soup.html.attrs.get('lang', '')
 
 
+class OgImageField(EasySearchField):
+    name = 'og:image'
+    whoosh_field = TEXT(stored=True)
+    
+    def parse_soup(self, soup, url):
+        image = soup.find('meta', attrs={'property': 'og:image'})
+        if image:
+            return image.get('content', '')
+        else:
+            return ''
+
+
 DEFAULT_EASY_SEARCH_FIELDS = (
     URLField,
     TitleField,
     TextField,
     LanguageField,
+    OgImageField,
 )
 
 EASY_SEARCH_FIELDS = getattr(
