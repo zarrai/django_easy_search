@@ -67,11 +67,17 @@ class OgImageField(EasySearchField):
     whoosh_field = TEXT(stored=True)
     
     def parse_soup(self, soup, url):
-        image = soup.find('meta', attrs={'property': 'og:image'})
-        if image:
-            return image.get('content', '')
-        else:
-            return ''
+        image = soup.find('meta', attrs={'property': 'og:image'}) or {}
+        return image.get('content', '')
+
+
+class MetaDescriptionField(EasySearchField):
+    name = 'description'
+    whoosh_field = TEXT(stored=True)
+    
+    def parse_soup(self, soup, url):
+        description = soup.find('meta', attrs={'name': 'description'}) or {}
+        return description.get('content', '')
 
 
 DEFAULT_EASY_SEARCH_FIELDS = (
@@ -80,6 +86,7 @@ DEFAULT_EASY_SEARCH_FIELDS = (
     TextField,
     LanguageField,
     OgImageField,
+    MetaDescriptionField,
 )
 
 EASY_SEARCH_FIELDS = getattr(
