@@ -63,7 +63,7 @@ class LanguageField(EasySearchField):
 
 
 class OgImageField(EasySearchField):
-    name = 'og:image'
+    name = 'og_image'
     whoosh_field = TEXT(stored=True)
     
     def parse_soup(self, soup, url):
