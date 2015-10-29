@@ -66,6 +66,7 @@ DEFAULT_EASY_SEARCH_FIELDS = (
     URLField,
     TitleField,
     TextField,
+    LanguageField,
 )
 
 EASY_SEARCH_FIELDS = getattr(
@@ -147,10 +148,7 @@ class Searcher:
         search_result = []
         query = '*%s*' % query
         with self.index.searcher() as searcher:
-            #q = Term('text', query)# | Term('title', query)
-            field_names = self.get_field_names()
-            qp = MultifieldParser(field_names, schema=self.index.schema)
-            q = qp.parse(query)
+            q = self.get_whoosh_query(query)
             results = searcher.search(q)
             results.fragmenter.surround = 20
             for r in results:
@@ -166,3 +164,14 @@ class Searcher:
             (f.name, f.get_display(result))
             for f in self.search_fields
         ])
+    
+    def get_whoosh_query(self, string):
+        query = None
+        for field in self.search_fields:
+            if query is None:
+                query = Wildcard(field.name, string)
+            else:
+                query = query | Wildcard(field.name, string)
+        return query
+                
+        
