@@ -80,25 +80,19 @@ class MetaDescriptionField(EasySearchField):
         return description.get('content', '')
 
 
-DEFAULT_EASY_SEARCH_FIELDS = [
+DEFAULT_EASY_SEARCH_FIELDS = (
     URLField,
     TitleField,
     TextField,
     LanguageField,
     OgImageField,
     MetaDescriptionField,
-]
+)
 
 EASY_SEARCH_FIELDS = getattr(
     settings,
     'EASY_SEARCH_FIELDS',
     DEFAULT_EASY_SEARCH_FIELDS
-)
-
-EASY_SEARCH_FIELDS = EASY_SEARCH_FIELDS + getattr(
-    settings,
-    'ADD_EASY_SEARCH_FIELDS',
-    []
 )
 
 
