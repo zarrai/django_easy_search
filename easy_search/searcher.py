@@ -160,22 +160,7 @@ class Searcher:
             value = field(soup, url).content
             kwargs[key] = value
         return kwargs
-    
-    #do the search on the generated index.
-    def search(self,query):
-        if not query:
-            return []
-        search_result = []
-        query = '*%s*' % query
-        with self.index.searcher() as searcher:
-            q = self.get_whoosh_query(query)
-            results = searcher.search(q)
-            results.fragmenter.surround = 20
-            for r in results:
-                res_obj = self.get_result_dict(r)
-                search_result.append(res_obj)
-            return search_result
-    
+
     def get_field_names(self):
         return [f.name for f in self.search_fields]
     
