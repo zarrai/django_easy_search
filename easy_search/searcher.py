@@ -1,3 +1,4 @@
+import importlib
 import urllib
 from bs4 import BeautifulSoup
 import os.path
@@ -12,81 +13,15 @@ from StringIO import StringIO
 from django.conf import settings
 
 
-class EasySearchField(object):
-    
-    def __init__(self, soup, url):
-        self.content = unicode(self.parse_soup(soup, url))
-    
-    @classmethod
-    def get_display(cls, result):
-        return result.get(cls.name, '')
-
-
-class TextField(EasySearchField):
-    name = 'text'
-    whoosh_field = TEXT(stored=True,spelling=True)
-    
-    def parse_soup(self, soup, url):
-        text = soup.get_text()
-        lines = (line.strip() for line in text.splitlines())
-        chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-        text = '\n'.join(chunk for chunk in chunks if chunk)
-        return text
-    
-    @classmethod
-    def get_display(cls, result):
-        return result.highlights("text")
-
-
-class TitleField(EasySearchField):
-    name = 'title'
-    whoosh_field = TEXT(stored=True)
-    
-    def parse_soup(self, soup, url):
-        return soup.title.string
-
-
-class URLField(EasySearchField):
-    name = 'url'
-    whoosh_field = ID(stored=True)
-    
-    def parse_soup(self, soup, url):
-        return url
-
-
-class LanguageField(EasySearchField):
-    name = 'language'
-    whoosh_field = TEXT(stored=True)
-    
-    def parse_soup(self, soup, url):
-        return soup.html.attrs.get('lang', '')
-
-
-class OgImageField(EasySearchField):
-    name = 'og_image'
-    whoosh_field = TEXT(stored=True)
-    
-    def parse_soup(self, soup, url):
-        image = soup.find('meta', attrs={'property': 'og:image'}) or {}
-        return image.get('content', '')
-
-
-class MetaDescriptionField(EasySearchField):
-    name = 'description'
-    whoosh_field = TEXT(stored=True)
-    
-    def parse_soup(self, soup, url):
-        description = soup.find('meta', attrs={'name': 'description'}) or {}
-        return description.get('content', '')
 
 
 DEFAULT_EASY_SEARCH_FIELDS = (
-    URLField,
-    TitleField,
-    TextField,
-    LanguageField,
-    OgImageField,
-    MetaDescriptionField,
+    'easy_search.fields.URLField',
+    'easy_search.fields.TitleField',
+    'easy_search.fields.TextField',
+    'easy_search.fields.LanguageField',
+    'easy_search.fields.OgImageField',
+    'easy_search.fields.MetaDescriptionField',
 )
 
 EASY_SEARCH_FIELDS = getattr(
@@ -109,7 +44,12 @@ class Searcher:
         self.index = open_dir(settings.EASY_SEARCH_INDEX_DIR)
     
     def find_search_fields(self):
-        self.search_fields = EASY_SEARCH_FIELDS # TODO: Extend to class creation by string
+        self.search_fields = []
+        for field in EASY_SEARCH_FIELDS:
+            module_name, class_name = field.rsplit('.', 1)
+            module = importlib.import_module(module_name)
+            cls = getattr(module, class_name)
+            self.search_fields.append(cls)
     
     def get_schema_kwargs(self):
         return dict([
