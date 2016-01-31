@@ -25,7 +25,10 @@ class TextField(EasySearchField):
 
     @classmethod
     def get_display(cls, result):
-        return result.highlights("text")
+        try:
+            return result.highlights("text")
+        except UnicodeDecodeError:
+            return result
 
 
 class TitleField(EasySearchField):
