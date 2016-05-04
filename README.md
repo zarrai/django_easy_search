@@ -1,6 +1,9 @@
 # django-easy-search
 
 
+This module should help to get started with a proper full text search.
+
+
 ## Requirements
 
 - Whoosh>=2.7
