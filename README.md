@@ -35,3 +35,10 @@
 If you would like to e.g. add additional template variables or change
 the template file, you can override the view.
 Do this by inheriting from `easy_search.views.EasySearchResultsMixin`.
+
+
+## Template Tags
+
+To display the search form, you can use the `get_search_form` template
+tag. Load the template library `search_form` and don't forget to use
+the GET method when displaying the form.
