@@ -1,5 +1,7 @@
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 import importlib
-import urllib
 from bs4 import BeautifulSoup
 import os.path
 from whoosh.fields import Schema, TEXT, ID
@@ -9,9 +11,17 @@ from whoosh.qparser import QueryParser
 from whoosh.qparser import MultifieldParser
 
 from lxml import etree
-from StringIO import StringIO
 from django.conf import settings
 
+try:
+    from StringIO import StringIO as BytesIO
+except ImportError:
+    from io import BytesIO
+
+try:
+    from urllib import urlopen
+except ImportError:
+    from urllib.request import urlopen
 
 
 
@@ -29,7 +39,6 @@ EASY_SEARCH_FIELDS = getattr(
     'EASY_SEARCH_FIELDS',
     DEFAULT_EASY_SEARCH_FIELDS
 )
-
 
 
 class Searcher:
@@ -62,8 +71,8 @@ class Searcher:
 
     #scan a site based on a sitemap url
     def scan_site(self,sitemap_url):
-        sitemap =  urllib.urlopen(sitemap_url).read()
-        urls = etree.iterparse(StringIO(sitemap), tag='{http://www.sitemaps.org/schemas/sitemap/0.9}url')
+        sitemap =  urlopen(sitemap_url).read()
+        urls = etree.iterparse(BytesIO(sitemap), tag='{http://www.sitemaps.org/schemas/sitemap/0.9}url')
         NS = {
             'x': 'http://www.sitemaps.org/schemas/sitemap/0.9',
             'x2': 'http://www.google.com/schemas/sitemap-mobile/1.0'
@@ -71,12 +80,12 @@ class Searcher:
 
         for event, url in urls:
             search_url = url.xpath('.//x:loc/text()', namespaces=NS)[0]
-            self._parse_url(unicode(search_url))
+            self._parse_url(search_url)
 
             
     def _parse_url(self,url):
-        print "scanning url: %s" % url
-        html = urllib.urlopen(url).read()
+        print ("scanning url: %s" % url)
+        html = urlopen(url).read()
         soup = BeautifulSoup(html)
         soup = self.clean_soup(soup)
         document_kwargs = self.get_document_kwargs(soup, url)

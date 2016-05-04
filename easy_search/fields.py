@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from whoosh.fields import TEXT, ID
 from whoosh.query import *
 
@@ -5,7 +7,7 @@ from whoosh.query import *
 class EasySearchField(object):
 
     def __init__(self, soup, url):
-        self.content = unicode(self.parse_soup(soup, url))
+        self.content = self.parse_soup(soup, url)
 
     @classmethod
     def get_display(cls, result):
