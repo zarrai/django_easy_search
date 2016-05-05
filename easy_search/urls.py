@@ -4,5 +4,5 @@ from .views import EasySearchResultsView
 
 
 urlpatterns = patterns('',
-    url(r'^$', EasySearchResultsView.as_view())
+    url(r'^$', EasySearchResultsView.as_view(), name='search-results')
 )
