@@ -23,7 +23,8 @@ try:
 except ImportError:
     from urllib.request import urlopen
 
-
+import sys
+sys.setrecursionlimit(5000)
 
 DEFAULT_EASY_SEARCH_FIELDS = (
     'easy_search.fields.URLField',
