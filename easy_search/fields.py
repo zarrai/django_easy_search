@@ -38,7 +38,11 @@ class TitleField(EasySearchField):
     whoosh_field = TEXT(stored=True)
 
     def parse_soup(self, soup, url):
-        return soup.title.string
+        return soup.title.string.replace('|', '\|')
+
+    @classmethod
+    def get_display(cls, result):
+        return result[cls.name].replace('\|', '|')
 
 
 class URLField(EasySearchField):
