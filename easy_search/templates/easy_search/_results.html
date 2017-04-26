@@ -7,6 +7,6 @@
 			<small><a href="{{result.url}}">{{result.url}}</a></small>
 		</li>
 	{% empty %}
-		<p>{% trans 'Pitty. Nothing found.' %}</p>
+		<p>{% blocktrans %}Sorry, nothing found.{% endblocktrans %}</p>
 	{% endfor %}
 </ul>
