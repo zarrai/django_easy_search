@@ -23,6 +23,8 @@ try:
 except ImportError:
     from urllib.request import urlopen
 
+from urllib.error import HTTPError
+
 import sys
 sys.setrecursionlimit(5000)
 
@@ -85,14 +87,18 @@ class Searcher:
 
             
     def _parse_url(self,url):
-        print ("scanning url: %s" % url)
-        html = urlopen(url).read()
-        soup = BeautifulSoup(html)
-        soup = self.clean_soup(soup)
-        document_kwargs = self.get_document_kwargs(soup, url)
-        writer = self.index.writer()
-        writer.add_document(**document_kwargs)
-        writer.commit()
+        try:
+            html = urlopen(url).read()
+        except HTTPError as e:
+            print ("ERROR scanning url %s: %s" % (url, e))
+        else:
+            print ("scanning url: %s" % url)
+            soup = BeautifulSoup(html)
+            soup = self.clean_soup(soup)
+            document_kwargs = self.get_document_kwargs(soup, url)
+            writer = self.index.writer()
+            writer.add_document(**document_kwargs)
+            writer.commit()
     
     def clean_soup(self, soup):
         for script in soup(["script", "style"]):
