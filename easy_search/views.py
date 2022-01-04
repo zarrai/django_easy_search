@@ -28,7 +28,7 @@ class EasySearchResultsMixin(object):
 
     def search(self, query):
         easy_searcher = Searcher()
-        query = '*%s*' % query.lower()
+        query = query.lower()
         with easy_searcher.index.searcher() as searcher:
             q = easy_searcher.get_whoosh_query(query)
             results = searcher.search(q)

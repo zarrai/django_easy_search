@@ -130,9 +130,9 @@ class Searcher:
         query = None
         for field in self.search_fields:
             if query is None:
-                query = Wildcard(field.name, string)
+                query = field.query(string)
             else:
-                query = query | Wildcard(field.name, string)
+                query = query | field.query(string)
         return query
                 
         
