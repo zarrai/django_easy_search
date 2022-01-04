@@ -44,7 +44,7 @@ class TextField(EasySearchField):
 
 class TitleField(EasySearchField):
     name = 'title'
-    whoosh_field = TEXT(stored=True, field_boost=3.0)
+    whoosh_field = TEXT(stored=True, field_boost=5.0)
 
     @classmethod
     def query(self, text):
@@ -57,6 +57,21 @@ class TitleField(EasySearchField):
     @classmethod
     def get_display(cls, result):
         return result[cls.name].replace('\|', '|')
+
+
+class Headline1Field(EasySearchField):
+    name = 'headline1'
+    whoosh_field = TEXT(stored=True, field_boost=5.0)
+
+    @classmethod
+    def query(self, text):
+        words = text.split()
+        return Phrase(self.name, words)
+
+    def parse_soup(self, soup, url):
+        headlines = soup.find_all('h1')
+        strings = [h.get_text() for h in headlines]
+        return ' '.join(strings)
 
 
 class URLField(EasySearchField):

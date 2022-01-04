@@ -31,6 +31,7 @@ sys.setrecursionlimit(5000)
 DEFAULT_EASY_SEARCH_FIELDS = (
     'easy_search.fields.URLField',
     'easy_search.fields.TitleField',
+    'easy_search.fields.Headline1Field',
     'easy_search.fields.TextField',
     'easy_search.fields.LanguageField',
     'easy_search.fields.OgImageField',
