@@ -4,6 +4,8 @@ from django.utils.encoding import python_2_unicode_compatible
 import importlib
 from bs4 import BeautifulSoup
 import os.path
+import re
+
 from whoosh.fields import Schema, TEXT, ID
 from whoosh.index import create_in, open_dir
 from whoosh.query import *
@@ -126,6 +128,14 @@ class Searcher:
             (f.name, f.get_display(result))
             for f in self.search_fields
         ])
+
+    def get_gendered_query(self, string):
+        if '*' in string:
+            female_string = string.replace('*', '')
+            male_string =  re.sub(r'\*(\w+)(\s|$)', r'\2', string)
+            return self.get_whoosh_query(female_string) | self.get_whoosh_query(male_string)
+        else:
+            return self.get_whoosh_query(string)
     
     def get_whoosh_query(self, string):
         query = None

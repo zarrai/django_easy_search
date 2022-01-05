@@ -30,7 +30,7 @@ class EasySearchResultsMixin(object):
         easy_searcher = Searcher()
         query = query.lower()
         with easy_searcher.index.searcher() as searcher:
-            q = easy_searcher.get_whoosh_query(query)
+            q = easy_searcher.get_gendered_query(query)
             results = searcher.search(q)
             results.fragmenter.surround = 20
             for r in results:
