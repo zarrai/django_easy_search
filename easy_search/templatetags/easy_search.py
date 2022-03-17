@@ -13,7 +13,7 @@ class SearchForm(forms.Form):
     )
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def get_search_form(context):
     value = context['request'].GET.get('q', '')
     return SearchForm(initial={'q': value})
