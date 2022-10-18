@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from easy_search.searcher import Searcher
-from django.shortcuts import render_to_response
+from django.shortcuts import render as render_to_response
 from django.template import RequestContext
 from django.views.generic.base import TemplateView
 
