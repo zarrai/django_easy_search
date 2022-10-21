@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from easy_search.searcher import Searcher
-from django.shortcuts import render_to_response
+from django.shortcuts import render as render_to_response
 from django.template import RequestContext
 from django.views.generic.base import TemplateView
 
@@ -28,9 +28,9 @@ class EasySearchResultsMixin(object):
 
     def search(self, query):
         easy_searcher = Searcher()
-        query = '*%s*' % query.lower()
+        query = query.lower()
         with easy_searcher.index.searcher() as searcher:
-            q = easy_searcher.get_whoosh_query(query)
+            q = easy_searcher.get_gendered_query(query)
             results = searcher.search(q)
             results.fragmenter.surround = 20
             for r in results:
