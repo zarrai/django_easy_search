@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from whoosh.fields import TEXT, ID
 from whoosh.query import *
+from whoosh.analysis import StemmingAnalyzer
 
 
 class EasySearchField(object):
@@ -20,7 +21,7 @@ class EasySearchField(object):
 
 class TextField(EasySearchField):
     name = 'text'
-    whoosh_field = TEXT(stored=True,spelling=True)
+    whoosh_field = TEXT(analyzer=StemmingAnalyzer(), stored=True,spelling=True)
 
     @classmethod
     def query(self, text):
@@ -44,7 +45,7 @@ class TextField(EasySearchField):
 
 class TitleField(EasySearchField):
     name = 'title'
-    whoosh_field = TEXT(stored=True, field_boost=5.0)
+    whoosh_field = TEXT(analyzer=StemmingAnalyzer(), stored=True, field_boost=5.0)
 
     @classmethod
     def query(self, text):
@@ -61,7 +62,7 @@ class TitleField(EasySearchField):
 
 class Headline1Field(EasySearchField):
     name = 'headline1'
-    whoosh_field = TEXT(stored=True, field_boost=5.0)
+    whoosh_field = TEXT(analyzer=StemmingAnalyzer(), stored=True, field_boost=5.0)
 
     @classmethod
     def query(self, text):
@@ -101,7 +102,7 @@ class OgImageField(EasySearchField):
 
 class MetaDescriptionField(EasySearchField):
     name = 'description'
-    whoosh_field = TEXT(stored=True)
+    whoosh_field = TEXT(analyzer=StemmingAnalyzer(), stored=True)
 
     def parse_soup(self, soup, url):
         description = soup.find('meta', attrs={'name': 'description'}) or {}
